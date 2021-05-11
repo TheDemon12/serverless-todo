@@ -5,7 +5,10 @@ import {
 	hello,
 	generateUploadUrl,
 	createTodo,
+	updateTodo,
+	deleteTodo,
 } from "@functions/http";
+import auth from "@functions/auth";
 
 const serverlessConfiguration: AWS = {
 	service: "todo-app",
@@ -16,7 +19,7 @@ const serverlessConfiguration: AWS = {
 			includeModules: true,
 		},
 	},
-	plugins: ["serverless-webpack"],
+	plugins: ["serverless-webpack", "serverless-iam-roles-per-function"],
 	provider: {
 		name: "aws",
 		runtime: "nodejs14.x",
@@ -24,6 +27,11 @@ const serverlessConfiguration: AWS = {
 		stage: "${opt:stage, 'dev'}",
 		// @ts-ignore
 		region: "${opt:region, 'ap-south-1'}",
+
+		tracing: {
+			apiGateway: true,
+			lambda: true,
+		},
 
 		apiGateway: {
 			minimumCompressionSize: 1024,
@@ -35,25 +43,18 @@ const serverlessConfiguration: AWS = {
 			ATTACHMENTS_BUCKET: "kartik-todos-attachments-${self:provider.stage}",
 		},
 		lambdaHashingVersion: "20201221",
-
-		iamRoleStatements: [
-			{
-				Effect: "Allow",
-				Action: ["dynamodb:Scan", "dynamodb:PutItem", "dynamodb:GetItem"],
-				Resource:
-					"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
-			},
-			{
-				Effect: "Allow",
-				Action: ["s3:PutObject", "s3:GetObject"],
-				Resource:
-					"arn:aws:s3:::${self:provider.environment.ATTACHMENTS_BUCKET}/*",
-			},
-		],
 	},
 
 	// import the function via paths
-	functions: { hello, getTodos, generateUploadUrl, createTodo },
+	functions: {
+		auth,
+		hello,
+		getTodos,
+		generateUploadUrl,
+		createTodo,
+		updateTodo,
+		deleteTodo,
+	},
 
 	resources: {
 		Resources: {
@@ -61,12 +62,12 @@ const serverlessConfiguration: AWS = {
 				Type: "AWS::DynamoDB::Table",
 				Properties: {
 					AttributeDefinitions: [
+						{ AttributeName: "userId", AttributeType: "S" },
 						{ AttributeName: "todoId", AttributeType: "S" },
-						{ AttributeName: "createdAt", AttributeType: "S" },
 					],
 					KeySchema: [
-						{ AttributeName: "todoId", KeyType: "HASH" },
-						{ AttributeName: "createdAt", KeyType: "RANGE" },
+						{ AttributeName: "userId", KeyType: "HASH" },
+						{ AttributeName: "todoId", KeyType: "RANGE" },
 					],
 					BillingMode: "PAY_PER_REQUEST",
 					TableName: "${self:provider.environment.TODOS_TABLE}",

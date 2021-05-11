@@ -7,7 +7,17 @@ export default {
 			http: {
 				method: "get",
 				path: "todos",
+				cors: true,
+				authorizer: "auth",
 			},
+		},
+	],
+	iamRoleStatements: [
+		{
+			Effect: "Allow",
+			Action: ["dynamodb:Query"],
+			Resource:
+				"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
 		},
 	],
 };

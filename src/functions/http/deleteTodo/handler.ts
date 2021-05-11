@@ -1,27 +1,24 @@
 import "source-map-support/register";
-
-import type { ValidatedEventAPIGatewayProxyEvent } from "@libs/apiGateway";
+import { APIGatewayProxyEvent, APIGatewayProxyHandler } from "aws-lambda";
 import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
-import schema from "./schema";
-import { createTodo } from "@businessLogic/todos";
+import { deleteTodo } from "@businessLogic/todos";
 import { parseUserId } from "src/auth/utils";
 
-const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
-	event
-) => {
+const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEvent) => {
+	const todoId = event.pathParameters.todoId;
+
 	const authorizationHeader = event.headers.Authorization;
 	const jwtToken = authorizationHeader.split(" ")[1];
 
 	const userId = parseUserId(jwtToken);
-
-	const todo = await createTodo(event.body, userId);
+	const deletedTodo = await deleteTodo(todoId, userId);
 
 	return formatJSONResponse(
 		{
-			item: todo,
+			item: deletedTodo,
 		},
-		201
+		200
 	);
 };
 

@@ -6,15 +6,24 @@ export default {
 	events: [
 		{
 			http: {
-				method: "post",
-				path: "hello",
+				method: "patch",
+				path: "todos/{todoId}",
 				request: {
 					schema: {
 						"application/json": schema,
 					},
 				},
 				cors: true,
+				authorizer: "auth",
 			},
+		},
+	],
+	iamRoleStatements: [
+		{
+			Effect: "Allow",
+			Action: ["dynamodb:UpdateItem"],
+			Resource:
+				"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
 		},
 	],
 };

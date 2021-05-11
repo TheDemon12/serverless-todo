@@ -1,4 +1,3 @@
-import schema from "./schema";
 import { handlerPath } from "@libs/handlerResolver";
 
 export default {
@@ -6,13 +5,8 @@ export default {
 	events: [
 		{
 			http: {
-				method: "post",
-				path: "todos",
-				request: {
-					schema: {
-						"application/json": schema,
-					},
-				},
+				method: "delete",
+				path: "todos/{todoId}",
 				cors: true,
 				authorizer: "auth",
 			},
@@ -21,7 +15,7 @@ export default {
 	iamRoleStatements: [
 		{
 			Effect: "Allow",
-			Action: ["dynamodb:PutItem"],
+			Action: ["dynamodb:DeleteItem"],
 			Resource:
 				"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
 		},
