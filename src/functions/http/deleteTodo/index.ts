@@ -8,6 +8,7 @@ export default {
 				method: "delete",
 				path: "todos/{todoId}",
 				cors: true,
+				authorizer: "auth",
 			},
 		},
 	],

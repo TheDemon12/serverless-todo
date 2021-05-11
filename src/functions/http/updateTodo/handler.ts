@@ -5,12 +5,16 @@ import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 import schema from "./schema";
 import { updateTodo } from "@businessLogic/todos";
+import { parseUserId } from "src/auth/utils";
 
 const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
 	event
 ) => {
 	const todoId = event.pathParameters.todoId;
-	const userId = "1234";
+	const authorizationHeader = event.headers.Authorization;
+	const jwtToken = authorizationHeader.split(" ")[1];
+
+	const userId = parseUserId(jwtToken);
 
 	const updatedTodo = await updateTodo(todoId, userId, event.body);
 

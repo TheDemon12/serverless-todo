@@ -14,13 +14,14 @@ export async function getAttachmentUploadUrl(todoId: string): Promise<string> {
 }
 
 export async function createTodo(
-	createTodoRequest: CreateTodoRequest
+	createTodoRequest: CreateTodoRequest,
+	userId: string
 ): Promise<TodoItem> {
 	const todoId = uuid.v4();
 	const attachmentsBucket = process.env.ATTACHMENTS_BUCKET;
 
 	const newTodo: TodoItem = {
-		userId: "1234", //TODO: Get User Id from JWT
+		userId,
 		todoId,
 		createdAt: new Date().toISOString(),
 		attachmentUrl: `https://${attachmentsBucket}.s3.amazonaws.com/${todoId}`,

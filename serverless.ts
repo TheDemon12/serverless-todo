@@ -8,6 +8,7 @@ import {
 	updateTodo,
 	deleteTodo,
 } from "@functions/http";
+import auth from "@functions/auth";
 
 const serverlessConfiguration: AWS = {
 	service: "todo-app",
@@ -63,6 +64,7 @@ const serverlessConfiguration: AWS = {
 
 	// import the function via paths
 	functions: {
+		auth,
 		hello,
 		getTodos,
 		generateUploadUrl,

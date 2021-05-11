@@ -8,6 +8,7 @@ export default {
 				method: "post",
 				path: "todos/{todoId}/attachment",
 				cors: true,
+				authorizer: "auth",
 			},
 		},
 	],
