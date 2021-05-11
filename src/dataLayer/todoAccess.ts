@@ -1,16 +1,15 @@
 import { UpdateTodoRequest } from "./../requests/UpdateTodoRequest";
 import { TodoItem } from "@models/TodoItem";
 import * as AWS from "aws-sdk";
+import * as AWSXRay from "aws-xray-sdk";
 import { createLogger } from "@utils/logger";
+
+const XAWS = AWSXRay.captureAWS(AWS);
 
 export class TodoAccess {
 	constructor(
-		private readonly docClient = new AWS.DynamoDB.DocumentClient(),
+		private readonly docClient = new XAWS.DynamoDB.DocumentClient(),
 		private readonly todosTable = process.env.TODOS_TABLE,
-		private readonly s3 = new AWS.S3({
-			signatureVersion: "v4",
-		}),
-		private readonly attachmentsBucket: string = process.env.ATTACHMENTS_BUCKET,
 		private readonly logger = createLogger("todo")
 	) {}
 
@@ -31,14 +30,6 @@ export class TodoAccess {
 		this.logger.info(result);
 
 		return result.Items as TodoItem[];
-	}
-
-	async getAttachmentUploadUrl(todoId: string): Promise<string> {
-		return this.s3.getSignedUrl("putObject", {
-			Bucket: this.attachmentsBucket,
-			Key: todoId,
-			Expires: 3000,
-		});
 	}
 
 	async createTodo(todo: TodoItem): Promise<TodoItem> {

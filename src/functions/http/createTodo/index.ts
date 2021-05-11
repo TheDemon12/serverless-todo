@@ -18,4 +18,12 @@ export default {
 			},
 		},
 	],
+	iamRoleStatements: [
+		{
+			Effect: "Allow",
+			Action: ["dynamodb:PutItem"],
+			Resource:
+				"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
+		},
+	],
 };

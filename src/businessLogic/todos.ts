@@ -3,14 +3,16 @@ import { CreateTodoRequest } from "./../requests/CreateTodoRequest";
 import { TodoAccess } from "@dataLayer/todoAccess";
 import { TodoItem } from "@models/TodoItem";
 import * as uuid from "uuid";
+import TodosStorage from "@dataLayer/todoStorage";
 
 const todoAccess = new TodoAccess();
+const todoStorage = new TodosStorage();
 
 export async function getAllTodos(userId: string): Promise<TodoItem[]> {
 	return todoAccess.getAllTodos(userId);
 }
 export async function getAttachmentUploadUrl(todoId: string): Promise<string> {
-	return todoAccess.getAttachmentUploadUrl(todoId);
+	return todoStorage.getAttachmentUploadUrl(todoId);
 }
 
 export async function createTodo(

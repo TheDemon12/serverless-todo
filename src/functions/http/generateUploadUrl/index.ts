@@ -12,4 +12,12 @@ export default {
 			},
 		},
 	],
+	iamRoleStatements: [
+		{
+			Effect: "Allow",
+			Action: ["s3:PutObject"],
+			Resource:
+				"arn:aws:s3:::${self:provider.environment.ATTACHMENTS_BUCKET}/*",
+		},
+	],
 };

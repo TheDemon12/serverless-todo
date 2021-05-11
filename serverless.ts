@@ -19,7 +19,7 @@ const serverlessConfiguration: AWS = {
 			includeModules: true,
 		},
 	},
-	plugins: ["serverless-webpack"],
+	plugins: ["serverless-webpack", "serverless-iam-roles-per-function"],
 	provider: {
 		name: "aws",
 		runtime: "nodejs14.x",
@@ -27,6 +27,11 @@ const serverlessConfiguration: AWS = {
 		stage: "${opt:stage, 'dev'}",
 		// @ts-ignore
 		region: "${opt:region, 'ap-south-1'}",
+
+		tracing: {
+			apiGateway: true,
+			lambda: true,
+		},
 
 		apiGateway: {
 			minimumCompressionSize: 1024,
@@ -38,28 +43,6 @@ const serverlessConfiguration: AWS = {
 			ATTACHMENTS_BUCKET: "kartik-todos-attachments-${self:provider.stage}",
 		},
 		lambdaHashingVersion: "20201221",
-
-		iamRoleStatements: [
-			{
-				Effect: "Allow",
-				Action: [
-					"dynamodb:Scan",
-					"dynamodb:PutItem",
-					"dynamodb:GetItem",
-					"dynamodb:DeleteItem",
-					"dynamodb:UpdateItem",
-					"dynamodb:Query",
-				],
-				Resource:
-					"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
-			},
-			{
-				Effect: "Allow",
-				Action: ["s3:PutObject", "s3:GetObject"],
-				Resource:
-					"arn:aws:s3:::${self:provider.environment.ATTACHMENTS_BUCKET}/*",
-			},
-		],
 	},
 
 	// import the function via paths
