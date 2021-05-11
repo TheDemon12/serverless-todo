@@ -7,6 +7,7 @@ export default {
 			http: {
 				method: "post",
 				path: "todos/{todoId}/attachment",
+				cors: true,
 			},
 		},
 	],

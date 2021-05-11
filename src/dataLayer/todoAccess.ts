@@ -1,3 +1,4 @@
+import { UpdateTodoRequest } from "./../requests/UpdateTodoRequest";
 import { TodoItem } from "@models/TodoItem";
 import * as AWS from "aws-sdk";
 
@@ -42,5 +43,32 @@ export class TodoAccess {
 			.promise();
 
 		return todo;
+	}
+
+	async updateTodo(
+		todoId: string,
+		userId: string,
+		updateTodo: UpdateTodoRequest
+	): Promise<TodoItem> {
+		console.log("Updating a todo with id: ", todoId);
+
+		const result = await this.docClient
+			.update({
+				TableName: this.todosTable,
+				Key: { todoId, userId },
+				UpdateExpression: "set dueDate=:dueDate, done=:done, #NameField=:name",
+				ExpressionAttributeNames: {
+					"#NameField": "name",
+				},
+				ExpressionAttributeValues: {
+					":dueDate": updateTodo.dueDate,
+					":done": updateTodo.done,
+					":name": updateTodo.name,
+				},
+				ReturnValues: "ALL_NEW",
+			})
+			.promise();
+
+		return result.Attributes as TodoItem;
 	}
 }

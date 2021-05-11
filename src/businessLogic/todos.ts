@@ -1,3 +1,4 @@
+import { UpdateTodoRequest } from "./../requests/UpdateTodoRequest";
 import { CreateTodoRequest } from "./../requests/CreateTodoRequest";
 import { TodoAccess } from "@dataLayer/todoAccess";
 import { TodoItem } from "@models/TodoItem";
@@ -19,7 +20,7 @@ export async function createTodo(
 	const attachmentsBucket = process.env.ATTACHMENTS_BUCKET;
 
 	const newTodo: TodoItem = {
-		userId: "",
+		userId: "1234", //TODO: Get User Id from JWT
 		todoId,
 		createdAt: new Date().toISOString(),
 		attachmentUrl: `https://${attachmentsBucket}.s3.amazonaws.com/${todoId}`,
@@ -28,4 +29,12 @@ export async function createTodo(
 	};
 
 	return todoAccess.createTodo(newTodo);
+}
+
+export async function updateTodo(
+	todoId: string,
+	userId: string,
+	updateTodoRequest: UpdateTodoRequest
+): Promise<TodoItem> {
+	return todoAccess.updateTodo(todoId, userId, updateTodoRequest);
 }

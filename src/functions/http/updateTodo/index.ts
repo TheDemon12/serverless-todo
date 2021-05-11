@@ -6,8 +6,8 @@ export default {
 	events: [
 		{
 			http: {
-				method: "post",
-				path: "hello",
+				method: "patch",
+				path: "todos/{todoId}",
 				request: {
 					schema: {
 						"application/json": schema,
