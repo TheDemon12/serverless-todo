@@ -6,6 +6,7 @@ import {
 	generateUploadUrl,
 	createTodo,
 	updateTodo,
+	deleteTodo,
 } from "@functions/http";
 
 const serverlessConfiguration: AWS = {
@@ -46,6 +47,7 @@ const serverlessConfiguration: AWS = {
 					"dynamodb:GetItem",
 					"dynamodb:DeleteItem",
 					"dynamodb:UpdateItem",
+					"dynamodb:Query",
 				],
 				Resource:
 					"arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
@@ -60,7 +62,14 @@ const serverlessConfiguration: AWS = {
 	},
 
 	// import the function via paths
-	functions: { hello, getTodos, generateUploadUrl, createTodo, updateTodo },
+	functions: {
+		hello,
+		getTodos,
+		generateUploadUrl,
+		createTodo,
+		updateTodo,
+		deleteTodo,
+	},
 
 	resources: {
 		Resources: {
@@ -68,12 +77,12 @@ const serverlessConfiguration: AWS = {
 				Type: "AWS::DynamoDB::Table",
 				Properties: {
 					AttributeDefinitions: [
-						{ AttributeName: "todoId", AttributeType: "S" },
 						{ AttributeName: "userId", AttributeType: "S" },
+						{ AttributeName: "todoId", AttributeType: "S" },
 					],
 					KeySchema: [
-						{ AttributeName: "todoId", KeyType: "HASH" },
-						{ AttributeName: "userId", KeyType: "RANGE" },
+						{ AttributeName: "userId", KeyType: "HASH" },
+						{ AttributeName: "todoId", KeyType: "RANGE" },
 					],
 					BillingMode: "PAY_PER_REQUEST",
 					TableName: "${self:provider.environment.TODOS_TABLE}",

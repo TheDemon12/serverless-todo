@@ -18,7 +18,7 @@ const handler: ValidatedEventAPIGatewayProxyEvent<typeof schema> = async (
 		{
 			item: updatedTodo,
 		},
-		204
+		200
 	);
 };
 

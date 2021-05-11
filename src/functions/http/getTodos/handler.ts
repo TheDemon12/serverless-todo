@@ -5,7 +5,8 @@ import { APIGatewayProxyHandler } from "aws-lambda";
 import { getAllTodos } from "@businessLogic/todos";
 
 const getTodos: APIGatewayProxyHandler = async () => {
-	const todos = await getAllTodos();
+	const userId = "1234";
+	const todos = await getAllTodos(userId);
 	return formatJSONResponse({ items: todos }, 200);
 };
 

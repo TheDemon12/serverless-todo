@@ -6,8 +6,8 @@ import * as uuid from "uuid";
 
 const todoAccess = new TodoAccess();
 
-export async function getAllTodos(): Promise<TodoItem[]> {
-	return todoAccess.getAllTodos();
+export async function getAllTodos(userId: string): Promise<TodoItem[]> {
+	return todoAccess.getAllTodos(userId);
 }
 export async function getAttachmentUploadUrl(todoId: string): Promise<string> {
 	return todoAccess.getAttachmentUploadUrl(todoId);
@@ -37,4 +37,11 @@ export async function updateTodo(
 	updateTodoRequest: UpdateTodoRequest
 ): Promise<TodoItem> {
 	return todoAccess.updateTodo(todoId, userId, updateTodoRequest);
+}
+
+export async function deleteTodo(
+	todoId: string,
+	userId: string
+): Promise<TodoItem> {
+	return todoAccess.deleteTodo(todoId, userId);
 }
